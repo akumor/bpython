@@ -1,0 +1,57 @@
+{% set name = "bpython" %}
+{% set version = "0.23" %}
+
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/bpython-{{ version }}.tar.gz
+  sha256: 9f0078abc887c48af088691e2f64797d6ca994ac0f4bc03c38d06f657d7c052a
+
+build:
+  number: 0
+  skip: true   # [py<37]
+  entry_points:
+    - bpython = bpython.curtsies:main
+    - bpython-curses = bpython.cli:main
+    - bpython-urwid = bpython.urwid:main [urwid]
+    - bpdb = bpdb:main
+  script: {{ PYTHON }} -m pip install . -vv
+
+requirements:
+  host:
+    - babel
+    - pip
+    - python
+    - sphinx
+  run:
+    - backports.cached-property  # [py<38]
+    - curtsies >=0.4.0
+    - cwcwidth
+    - greenlet
+    - pygments
+    - python
+    - pyxdg
+    - requests
+    - typing-extensions  # [py<38]
+
+test:
+  imports:
+    - bpdb
+    - bpython
+  commands:
+    - pip check
+    - bpython --help
+    - bpython-curses --help
+    - bpython-urwid --help
+    - bpdb --help
+  requires:
+    - pip
+
+about:
+  home: https://www.bpython-interpreter.org/
+  license: BSD-3-Clause
+  license_file: LICENSE
+
